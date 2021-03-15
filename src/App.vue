@@ -1,18 +1,25 @@
 <template>
   <div id="app">
-    <input type="text" v-model="newSym" id="new-symbol-input" placeholder="Enter Stock Symbol">
-    <button @click="submitNewSymbol()">Track</button>
-    <template v-if="stocks.length">
-      <div v-for="(stock, index) in stocks" :key="index">
-        <StockCard
-          :name="stock.name"
-          :sym="stock.symbol"
-          :open="stock.recent['1. open']"
-          :close="stock.recent['4. close']"
-          :high="stock.recent['2. high']"
-          :low="stock.recent['3. low']"/>
-      </div>
-    </template>
+    <div id="title-container">
+      <h1>Stock Watcher</h1>
+    </div>
+    <div id="input-container">
+      <input type="text" v-model="newSym" id="new-symbol-input" placeholder="Enter Stock Symbol">
+      <button @click="submitNewSymbol()">Add Stock</button>
+    </div>
+    <div id="dashboard">
+      <template v-if="stocks.length">
+        <div v-for="(stock, index) in stocks" :key="index">
+          <StockCard
+            :name="stock.name"
+            :sym="stock.symbol"
+            :open="formatNum(stock.recent['1. open'])"
+            :close="formatNum(stock.recent['4. close'])"
+            :high="formatNum(stock.recent['2. high'])"
+            :low="formatNum(stock.recent['3. low'])"/>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -25,7 +32,7 @@ export default {
   data () {
     return {
       hasStocks: false,
-      symbols: ['GOOG'],
+      symbols: [],
       stocks: [],
       api: 'HY0JP87WH3PG17X6',
       newSym: ''
@@ -111,6 +118,9 @@ export default {
       }
       this.hasStocks = true
       console.log(this.stocks)
+    },
+    formatNum (num) {
+      return Number(num).toFixed(2)
     }
   },
   async mounted () {
@@ -127,7 +137,44 @@ export default {
 
 <style lang="scss">
   @import './assets/styles/style.scss';
-  #app {
-    background-color: green;
+
+  #title-container {
+    h1 {
+      font-size: 5rem;
+      font-weight: 700;
+    }
   }
+
+  #input-container {
+    input {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.25rem;
+      padding: 1rem 2rem;
+      margin-top: 2rem;
+      margin-right: 1rem;
+    }
+
+    button {
+      background: $color-button;
+      text-transform: uppercase;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 1rem 2rem;
+      color: white;
+      border: none;
+      box-shadow: $shadow-button;
+      border-radius: .25rem;
+    }
+  }
+
+  #dashboard {
+    display: grid;
+    width: 100%;
+    height: auto;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 2rem;
+    row-gap: 2rem;
+  }
+
 </style>
